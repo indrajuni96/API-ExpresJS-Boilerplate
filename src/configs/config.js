@@ -1,6 +1,6 @@
 // import all the required modules
 const mysql = require('mysql')
-const config = require('./config')
+const config = require('./database')
 
 // connect api to database
 const connection = mysql.createConnection(config.database.mysql)
