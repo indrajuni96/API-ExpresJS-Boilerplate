@@ -1,4 +1,5 @@
 const exampleModel = require('../models/example')
+const cloudImage = require('../helpers/cloudImage')
 
 module.exports = {
     getExample: async (req, res) => {
@@ -22,13 +23,19 @@ module.exports = {
     addExample: async (req, res) => {
         const name = req.body
         const data = name
+        const file = req.files.photo
+
+        // Ini upload imagenya belum di taro ke database baru console.log URL Dari Cloudinary
+        const imageUpload = await cloudImage.upload(file)
+        console.log(imageUpload.url)
 
         await exampleModel.addExample(data)
             .then(result => {
                 res.json({
                     status: 200,
                     message: 'Data added successfully!',
-                    data
+                    data,
+                    cloudinaryUrlImage: imageUpload.url
                 })
             })
             .catch(error => {
