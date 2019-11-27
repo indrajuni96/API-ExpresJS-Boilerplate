@@ -25,9 +25,19 @@ module.exports = {
         const data = name
         const file = req.files.photo
 
+        let imageExtension = file.name.split('.')[1]
+        let isImage = ["png", "jpg", "jpeg", "svg", "gif"].includes(imageExtension)
+        // console.log(isImage)
+
+        if (!isImage) {
+            return res.json({
+                status: 400,
+                message: `Please upload an image file not ${imageExtension} file`
+            })
+        }
         // Ini upload imagenya belum di taro ke database baru console.log URL Dari Cloudinary
         const imageUpload = await cloudImage.upload(file)
-        console.log(imageUpload.url)
+        // console.log(imageUpload.url)
 
         await exampleModel.addExample(data)
             .then(result => {
