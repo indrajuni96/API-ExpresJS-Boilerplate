@@ -8,5 +8,6 @@ const userController = require('../controllers/userController')
 // Routes
 Route
     .post('/register', userController.registerUser)
+    .post('/login', userController.loginUser)
 
 module.exports = Route

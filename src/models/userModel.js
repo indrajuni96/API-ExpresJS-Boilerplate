@@ -14,5 +14,17 @@ module.exports = {
                     }
                 })
         })
+    },
+    loginUser: (data) => {
+        return new Promise((resolve, reject) => {
+            conn.query('SELECT * FROM users WHERE email = ?', data,
+                (error, result) => {
+                    if (!error) {
+                        resolve(result)
+                    } else {
+                        reject(new Error(error))
+                    }
+                })
+        })
     }
 }
