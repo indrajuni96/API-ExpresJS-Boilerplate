@@ -1,5 +1,6 @@
 const exampleModel = require('../models/example')
 const cloudImage = require('../helpers/cloudImage')
+const schema = require('../configs/validation')
 
 module.exports = {
     getExample: async (req, res) => {
@@ -21,16 +22,32 @@ module.exports = {
             })
     },
     addExample: async (req, res) => {
-        const name = req.body
-        const data = name
-        const file = req.files.photo
+        const data = {
+            name: req.body.name
+        }
+        const validation = schema.example_add.validate(data)
 
+        if (validation.error) {
+            return res.status(400).json({
+                status: 400,
+                message: validation.error.details[0].message
+            });
+        }
+
+        if (!req.files) {
+            return res.status(400).json({
+                status: 400,
+                message: "Field image can't be null"
+            })
+        }
+
+        const file = req.files.photo
         let imageExtension = file.name.split('.')[1]
         let isImage = ["png", "jpg", "jpeg", "svg", "gif"].includes(imageExtension)
         // console.log(isImage)
 
         if (!isImage) {
-            return res.json({
+            return res.status(400).json({
                 status: 400,
                 message: `Please upload an image file not ${imageExtension} file`
             })
@@ -58,8 +75,17 @@ module.exports = {
     },
     editExample: async (req, res) => {
         const id = req.params
-        const name = req.body
-        const data = name
+        const data = {
+            name: req.body.name
+        }
+        const validation = schema.example_edit.validate(data)
+
+        if (validation.error) {
+            return res.status(400).json({
+                status: 400,
+                message: validation.error.details[0].message
+            });
+        }
 
         await exampleModel.editExample(data, id)
             .then(result => {

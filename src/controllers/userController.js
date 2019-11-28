@@ -2,12 +2,24 @@
 const userModel = require('../models/userModel')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const schema = require('../configs/validation')
 
 // Controllers
 module.exports = {
     registerUser: async (req, res) => {
         // Get data form req BODY
         const { username, email, password } = req.body
+
+        // Validation
+        const validation = schema.user_register.validate({ username, email, password })
+
+        // Cek Validation error
+        if (validation.error) {
+            return res.status(400).json({
+                status: 400,
+                message: validation.error.details[0].message
+            });
+        }
 
         // Hash Password
         const salt = bcrypt.genSaltSync(10)
@@ -39,6 +51,17 @@ module.exports = {
     loginUser: async (req, res) => {
         // Get data from req BODY
         const { email, password } = req.body
+
+        // Validation
+        const validation = schema.user_login.validate({ email, password })
+
+        // Cek Validation error
+        if (validation.error) {
+            return res.status(400).json({
+                status: 400,
+                message: validation.error.details[0].message
+            });
+        }
 
         const resultQuery = await userModel.loginUser(email)
 
